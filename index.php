@@ -23,7 +23,7 @@
             </div>
 
             <form method="post" action="" class="login-form" id="signInForm">
-                <div class="role-selector" aria-label="Select account type">
+                <div class="role-selector" aria-label="elect account type">
                     <label class="role-option active">
                         <input type="radio" name="userType" value="student" checked>
                         <span><i class="fas fa-user-graduate"></i> Student</span>
@@ -38,7 +38,7 @@
                         <input type="radio" name="userType" value="admin">
                         <span><i class="fas fa-shield-halved"></i> Admin</span>
                     </label>
-                    
+
                 </div>
 
                 <div class="input-group">
