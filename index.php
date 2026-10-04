@@ -1,5 +1,48 @@
 <?php
+session_start();
+require "db_connect.php";
+ 
+$error = "";
+ 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+ 
+    $email        = trim($_POST['email']);
+    $password     = $_POST['password'];
+    $selectedRole = $_POST['userType'];
+ 
+    if (empty($email) || empty($password)) {
+        $error = "Punuan ang email at password.";
+    } else {
+ 
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE gmail = ?");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+ 
+        if ($user && md5($password) === $user['password']) {
+ 
+            if ($user['role'] !== $selectedRole) {
+                $error = "Hindi tugma ang napiling role sa account na ito.";
+            } else {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['gmail']   = $user['gmail'];
+                $_SESSION['role']    = $user['role'];
+ 
+                switch ($user['role']) {
+                    case 'student': header("Location: student.php"); break;
+                    case 'staff':   header("Location: staff.php"); break;
+                    case 'admin':   header("Location: admin.php"); break;
+                }
+                exit();
+            }
+        } else {
+            $error = "Maling email o password.";
+        }
+    }
+}
+
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +64,16 @@
                     <p class="subtitle">Sign in to continue</p>
                 </div>
             </div>
+                  
+                        <form method="post" action="" class="login-form" id="signInForm">
+ 
+
+                      
+                <?php if ($error): ?>
+                    <p style="color:red;"><strong><?= htmlspecialchars($error) ?></strong></p>
+                <?php endif; ?>
+ 
+
 
             <form method="post" action="" class="login-form" id="signInForm">
                 <div class="role-selector" aria-label="elect account type">
@@ -61,6 +114,8 @@
             </form>
         </div>
     </div>
+
+    
 
     <script src="script.js"></script>
 </body>
